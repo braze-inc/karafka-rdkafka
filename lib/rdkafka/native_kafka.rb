@@ -58,6 +58,8 @@ module Rdkafka
                 break
               end
             end
+
+            :exited_cleanly
           end
 
           @polling_thread.name = "rdkafka.native_kafka##{Rdkafka::Bindings.rd_kafka_name(@inner).gsub('rdkafka', '')}"
@@ -113,7 +115,12 @@ module Rdkafka
           # Wait for the polling thread to finish up,
           # this can be aborted in practice if this
           # code runs from a finalizer.
-          @polling_thread.join
+          polling_thread_join_value = @polling_thread.join
+          if polling_thread_join_value.nil?
+            $stderr.puts "Failed to wait for the rdkafka polling thread"
+          elsif @polling_thread.value != :exited_cleanly
+            $stderr.puts "rdkafka polling thread did not exit cleanly"
+          end
         end
 
         # Destroy the client after locking both mutexes
