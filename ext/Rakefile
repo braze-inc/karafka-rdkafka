@@ -22,10 +22,8 @@ task :default => :clean do
       ENV["LDFLAGS"] = "-L#{homebrew_prefix}/lib" unless ENV["LDFLAGS"]
     end
 
-    releases = File.expand_path(File.join(File.dirname(__FILE__), '../dist'))
-
     recipe.files << {
-      :url => "file://#{releases}/librdkafka_#{Rdkafka::LIBRDKAFKA_VERSION}.tar.gz",
+      :url => "https://codeload.github.com/confluentinc/librdkafka/tar.gz/v#{Rdkafka::LIBRDKAFKA_VERSION}",
       :sha256 => Rdkafka::LIBRDKAFKA_SOURCE_SHA256
     }
     recipe.configure_options = ["--host=#{recipe.host}"]
@@ -78,7 +76,7 @@ namespace :build do
     version = "git-#{ref}"
 
     recipe = MiniPortile.new("librdkafka", version)
-    recipe.files << "https://github.com/edenhill/librdkafka/archive/#{ref}.tar.gz"
+    recipe.files << "https://github.com/confluentinc/librdkafka/archive/#{ref}.tar.gz"
     recipe.configure_options = ["--host=#{recipe.host}","--enable-static", "--enable-zstd"]
     recipe.cook
 
