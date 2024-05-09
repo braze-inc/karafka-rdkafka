@@ -50,7 +50,7 @@ module Rdkafka
           @polling_thread = Thread.new do
             loop do
               @poll_mutex.synchronize do
-                Rdkafka::Bindings.rd_kafka_poll(@inner, 100)
+                Rdkafka::Bindings.rd_kafka_poll(@inner, 1000)
               end
 
               # Exit thread if closing and the poll queue is empty
